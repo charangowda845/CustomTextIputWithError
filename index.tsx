@@ -1,7 +1,8 @@
-import React, { FunctionComponent, memo, useMemo, CSSProperties, ChangeEvent } from "react";
+import React, { FunctionComponent, memo, useMemo, CSSProperties, ChangeEvent,useState } from "react";
 import "./CustomTextIputWithError.css";
 
-type CustomTextIputWithErrorType = {
+type CustomTextIputWithErrorType = { 
+    type?:string;
    errortext?:string;
   inputText?: string;
   inputValue?: string;
@@ -19,7 +20,8 @@ type CustomTextIputWithErrorType = {
 };
 
 const CustomTextIputWithError: FunctionComponent<CustomTextIputWithErrorType> = memo(
-  ({ errortext,
+  ({type, 
+    errortext,
     inputText,
     inputValue,
     propTop,
@@ -34,6 +36,7 @@ const CustomTextIputWithError: FunctionComponent<CustomTextIputWithErrorType> = 
     propColor1,
     onInputChange,
   }) => {
+    const [isPasswordVisible, setPasswordVisibility] = useState(false);
     const property1ErrorStyle: CSSProperties = useMemo(() => {
       return {
         top: propTop,
@@ -69,12 +72,14 @@ const CustomTextIputWithError: FunctionComponent<CustomTextIputWithErrorType> = 
         onInputChange(event.target.value);
       }
     };
-
+    const togglePasswordVisibility = () => {
+        setPasswordVisibility(!isPasswordVisible);
+      };
     return (
       <div className="property-1error" style={property1ErrorStyle}>
         <div className="input-wrapper" style={frameDivStyle}>
           <input
-            type="text"
+            type={isPasswordVisible ? "text" : type} // Use "text" if password visibility is enabled
             className="input"
             style={{ ...inputStyle, outline: "none" }}
             value={inputValue}
@@ -82,6 +87,16 @@ const CustomTextIputWithError: FunctionComponent<CustomTextIputWithErrorType> = 
            
             placeholder= {inputText}
           />
+
+{type === "password" && ( // Show the show/hide password button only for password input
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="password-toggle-btn"
+            >
+              {isPasswordVisible ? "Hide" : "Show"}
+            </button>
+          )}
         </div>
         <div className="note" style={noteStyle}>
            {errortext}
